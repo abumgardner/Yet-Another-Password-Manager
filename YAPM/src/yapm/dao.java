@@ -7,12 +7,15 @@ package yapm;
 
 import com.bumgardner.utils.RecordObject;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -24,13 +27,14 @@ public class dao {
     private String m_sLastError = "";
     private boolean m_bHasError = false;
 
-    private static String m_sAddressBookCreate = "create table AddressBook (ident INTEGER PRIMARY KEY AUTOINCREMENT," +
-        "Website nvarchar(250), " +
-        "Username nvarchar(100), " +
-        "Password nvarchar(100), " +
-        "Comment nvarchar(250), " +
-        "Address nvarchar(400), " +
-        "Name nvarchar(50) NOT NULL)";
+    private static String m_sAddressBookCreate = "create table AddressBook (" +
+        "Website varchar(250), " +
+        "Username varchar(100), " +
+        "Password varchar(100), " +
+        "Comment varchar(250), " +
+        "Address varchar(400), " +
+        "Name varchar(50) NOT NULL," +
+        "PRIMARY KEY (Name))";
 
     public boolean HasError() {
         return m_bHasError;
@@ -65,14 +69,15 @@ public class dao {
     private Connection getConnection(String sDatabase) {
         Connection connection = null;
         try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:" + sDatabase);
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
+            connection = DriverManager.getConnection("jdbc:derby:" + sDatabase + ";create=true");
             return connection;
         } catch (java.lang.ClassNotFoundException ce) {
             System.out.println("Class not found!");
             return connection;
         } catch (Exception e) {
             System.out.println("Exception in getConnection: " + e);
+            e.printStackTrace();
             return connection;
         }
     }
@@ -93,7 +98,7 @@ public class dao {
         Statement stmt = null;
         ResultSet rs = null;
         try {
-            stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            stmt = con.createStatement();
             rs = stmt.executeQuery(sSql);
             return rs;
         } catch (Exception e) {
@@ -152,11 +157,60 @@ public class dao {
     }
 
     private boolean tableExists() {
-        String sSql = "Select TBL_NAME FROM sqlite_master WHERE (TBL_NAME = 'AddressBook')";
+        try {
+            DatabaseMetaData md = con.getMetaData();
+            ResultSet rs = md.getTables(null, null, null, new String[] { "TABLE" });
+            if(rs.next())
+                return true;
+            else
+                return false;
+        } catch (SQLException ex) {
+            Logger.getLogger(dao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return false;
+//        String sSql = "Select TBL_NAME FROM sqlite_master WHERE (TBL_NAME = 'AddressBook')";
+//        RecordObject roRec = getSingleRecord(sSql);
+//        if(roRec==null || (roRec.getString("TBL_NAME")==null || roRec.getString("TBL_NAME").equals("")))
+//            return false;
+//        else
+//            return true;
+    }
+
+    public boolean DeleteAddressBookEntry(String sKey) {
+        String sSql  = "DELETE FROM ADDRESSBOOK WHERE ident=" + sKey;
+        return executeNonQuery(sSql) == 1;
+    }
+
+    public ArrayList<RecordObject> GetAddressBookEntries() {
+        String sSql  = "SELECT * FROM ADDRESSBOOK";
+        return ResultSetToArrayList(getManyRecords(sSql));
+    }
+
+    public ArrayList<RecordObject> GetAddressBookEntries(String sName) {
+        String sSql = "SELECT * FROM ADDRESSBOOK WHERE Name like '%" + sName + "%'";
+        return ResultSetToArrayList(getManyRecords(sSql));
+    }
+
+    public boolean DoesAddressBookNameExist(String sName) {
+        String sSql = "SELECT Name FROM AddressBook WHERE Name='" + sName + "'";
         RecordObject roRec = getSingleRecord(sSql);
-        if(roRec==null || (roRec.getString("TBL_NAME")==null || roRec.getString("TBL_NAME").equals("")))
+        if(roRec==null) 
             return false;
         else
             return true;
+    }
+    
+   public boolean UpdateAddressBookEntry(String sKey, String sName, String sWebsite, String sUsername, String sPassword, String sComment, String sAddress) {
+        String sSql  = "UPDATE AddressBook set Website='" + sWebsite + "', ";
+        sSql += "Username='" + sUsername + "', Password='" + sPassword + "', Comment='" + sComment + "', Address='" + sAddress + "', Name='" + sName + "' WHERE ident=" + sKey;
+        return executeNonQuery(sSql) == 1;
+   }
+
+    public boolean InsertAddressBookEntry(String sName, String sWebsite, String sUsername, String sPassword, String sComment, String sAddress) {
+        String sSql = "INSERT INTO AddressBook (Website, Username, Password, Comment, Address, Name) VALUES ";
+        sSql += "('" + sWebsite + "', '" + sUsername + "', '" + sPassword + "', '" + sComment + "', '" + sAddress + "', '" + sName + "')";
+
+        return executeNonQuery(sSql) == 1;
     }
 }

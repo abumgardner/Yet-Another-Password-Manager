@@ -12,7 +12,7 @@ import org.jdesktop.application.SingleFrameApplication;
  */
 public class YAPMApp extends SingleFrameApplication { 
 
-    private dao AppDao;
+    
 
     /**
      * At startup create and show the main frame of the application.
@@ -44,13 +44,6 @@ public class YAPMApp extends SingleFrameApplication {
         launch(YAPMApp.class, args);
     }
 
-    protected boolean initDB() {
-        AppDao = new dao();
-        if(AppDao.HasError()) {
-            System.out.println("Unable it init db! : " + AppDao.LastError());
-            return false;
-        }
-        return true;
-    }
+    
 
 }
