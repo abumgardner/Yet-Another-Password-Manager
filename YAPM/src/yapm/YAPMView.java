@@ -1,11 +1,11 @@
 /*
  * YAPMView.java
  */
-
 package yapm;
 
 import com.bumgardner.utils.RecordObject;
 import java.awt.Color;
+import java.awt.Point;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
@@ -13,6 +13,8 @@ import org.jdesktop.application.FrameView;
 import org.jdesktop.application.TaskMonitor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.URI;
 import java.util.ArrayList;
 import javax.swing.Timer;
@@ -20,6 +22,8 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * The application's main frame.
@@ -27,7 +31,7 @@ import javax.swing.JOptionPane;
 public class YAPMView extends FrameView {
 
     private dao AppDao;
-    
+
     public YAPMView(SingleFrameApplication app) {
         super(app);
 
@@ -37,6 +41,7 @@ public class YAPMView extends FrameView {
         ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
         messageTimer = new Timer(messageTimeout, new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 statusMessageLabel.setText("");
             }
@@ -47,6 +52,7 @@ public class YAPMView extends FrameView {
             busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
         }
         busyIconTimer = new Timer(busyAnimationRate, new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 busyIconIndex = (busyIconIndex + 1) % busyIcons.length;
                 statusAnimationLabel.setIcon(busyIcons[busyIconIndex]);
@@ -59,6 +65,7 @@ public class YAPMView extends FrameView {
         // connecting action tasks to status bar via TaskMonitor
         TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
         taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 String propertyName = evt.getPropertyName();
                 if ("started".equals(propertyName)) {
@@ -75,19 +82,19 @@ public class YAPMView extends FrameView {
                     progressBar.setVisible(false);
                     progressBar.setValue(0);
                 } else if ("message".equals(propertyName)) {
-                    String text = (String)(evt.getNewValue());
+                    String text = (String) (evt.getNewValue());
                     statusMessageLabel.setText((text == null) ? "" : text);
                     messageTimer.restart();
                 } else if ("progress".equals(propertyName)) {
-                    int value = (Integer)(evt.getNewValue());
+                    int value = (Integer) (evt.getNewValue());
                     progressBar.setVisible(true);
                     progressBar.setIndeterminate(false);
                     progressBar.setValue(value);
                 }
             }
         });
-        
-        if(!initDB()) {
+
+        if (!initDB()) {
             JOptionPane.showMessageDialog(null, "Unable to init database!");
             System.exit(-1);
         }
@@ -97,22 +104,54 @@ public class YAPMView extends FrameView {
 
     private void LoadEmUp() {
         ArrayList<RecordObject> alRet = AppDao.GetAddressBookEntries();
-        int iCount = 0;
-        for(RecordObject roRec : alRet) {
-            if(iCount>=tblEntries.getModel().getRowCount()) {
-                //Add a row
 
+
+        DefaultTableModel model = new DefaultTableModel() {
+
+            @Override
+            public boolean isCellEditable(int i, int x) {
+                return false;
             }
-            tblEntries.getModel().setValueAt(roRec.getString("Name"), iCount, 0);
-            tblEntries.getModel().setValueAt(roRec.getString("Website"), iCount, 1);
-            tblEntries.getModel().setValueAt(roRec.getString("Comment"), iCount, 2);
-            iCount++;
+        };
+
+        model.addColumn("Name");
+        model.addColumn("Website");
+        model.addColumn("Comment");
+
+        tblEntries.setModel(model);
+
+        for (RecordObject roRec : alRet) {
+            model.addRow(new String[]{roRec.getString("Name"), roRec.getString("Website"), roRec.getString("Comment")});
         }
+
+        tblEntries.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    Point p = e.getPoint();
+                    int row = tblEntries.rowAtPoint(p);
+                    String sName = (String) tblEntries.getModel().getValueAt(row, 0);
+                    if(sName!=null && !sName.equals("")) {
+                        //Populate the text fields and switch the displayed tab
+                        ViewRecord(sName);
+                        jTabbedPane1.setSelectedIndex(1);
+                    }
+                }
+            }
+        });
+    }
+
+    private void ViewRecord(String sName) {
+        RecordObject roRec = AppDao.GetAddressBookEntry(sName);
+        txtName.setText(roRec.getString("Name"));
+        txtWebsite.setText(roRec.getString("Website"));
+       
     }
 
     protected boolean initDB() {
         AppDao = new dao();
-        if(AppDao.HasError()) {
+        if (AppDao.HasError()) {
             System.out.println("Unable it init db! : " + AppDao.LastError());
             return false;
         }
@@ -474,11 +513,11 @@ public class YAPMView extends FrameView {
 
     @Action
     public void LaunchBrowser() {
-        if(txtWebsite.getText()==null || txtWebsite.getText().equals("")) {
+        if (txtWebsite.getText() == null || txtWebsite.getText().equals("")) {
             return;
         }
         //otherwise launch the default browser.
-        if(!java.awt.Desktop.isDesktopSupported()) {
+        if (!java.awt.Desktop.isDesktopSupported()) {
             JOptionPane.showMessageDialog(null, "Java Desktop is not supported! Can not launch browser!");
             return;
         }
@@ -494,24 +533,23 @@ public class YAPMView extends FrameView {
 
     @Action
     public void ShowHidePassword() {
-        if(chkShowPassword.isSelected()) {
-            
+        if (chkShowPassword.isSelected()) {
         }
     }
 
     @Action
     public void AddUpdate() {
-        if(cmdAddUpdate.getText().equalsIgnoreCase("Add")) {
+        if (cmdAddUpdate.getText().equalsIgnoreCase("Add")) {
             Add();
         }
     }
 
     private void Add() {
-        if(!FieldsAreValid()) {
+        if (!FieldsAreValid()) {
             return;
         }
         //String sName, String sWebsite, String sUsername, String sPassword, String sComment, String sAddress
-        if(AppDao.InsertAddressBookEntry(txtName.getText(), txtWebsite.getText(), txtUsername.getText(), txtPassword.getText(), txtComment.getText(), "")) {
+        if (AppDao.InsertAddressBookEntry(txtName.getText(), txtWebsite.getText(), txtUsername.getText(), txtPassword.getText(), txtComment.getText(), "")) {
             JOptionPane.showMessageDialog(null, "Entry Created", "Success", JOptionPane.INFORMATION_MESSAGE);
             ClearFields();
         } else {
@@ -520,7 +558,7 @@ public class YAPMView extends FrameView {
     }
 
     private boolean FieldsAreValid() {
-        if(isNullOrEmpty(txtName.getText())) {
+        if (isNullOrEmpty(txtName.getText())) {
             txtName.setBackground(Color.red);
             return false;
         }
@@ -528,10 +566,11 @@ public class YAPMView extends FrameView {
     }
 
     private boolean isNullOrEmpty(String sVal) {
-        if(sVal==null || sVal.equals(""))
+        if (sVal == null || sVal.equals("")) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     @Action
@@ -542,7 +581,6 @@ public class YAPMView extends FrameView {
         txtPassword.setText("");
         txtComment.setText("");
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox chkShowPassword;
     private javax.swing.JButton cmdAddUpdate;
@@ -575,12 +613,10 @@ public class YAPMView extends FrameView {
     private javax.swing.JTextField txtUsername;
     private javax.swing.JTextField txtWebsite;
     // End of variables declaration//GEN-END:variables
-
     private final Timer messageTimer;
     private final Timer busyIconTimer;
     private final Icon idleIcon;
     private final Icon[] busyIcons = new Icon[15];
     private int busyIconIndex = 0;
-
     private JDialog aboutBox;
 }

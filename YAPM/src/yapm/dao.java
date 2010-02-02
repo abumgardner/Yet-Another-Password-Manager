@@ -192,6 +192,10 @@ public class dao {
         return ResultSetToArrayList(getManyRecords(sSql));
     }
 
+    public RecordObject GetAddressBookEntry(String sName) {
+        return getSingleRecord("SELECT * FROM ADDRESSBOOK WHERE Name='" + sName + "'");
+    }
+
     public boolean DoesAddressBookNameExist(String sName) {
         String sSql = "SELECT Name FROM AddressBook WHERE Name='" + sName + "'";
         RecordObject roRec = getSingleRecord(sSql);
