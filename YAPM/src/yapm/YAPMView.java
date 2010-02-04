@@ -146,7 +146,11 @@ public class YAPMView extends FrameView {
         RecordObject roRec = AppDao.GetAddressBookEntry(sName);
         txtName.setText(roRec.getString("Name"));
         txtWebsite.setText(roRec.getString("Website"));
-       
+        txtUsername.setText(roRec.getString("Username"));
+        txtPassword.setText(roRec.getString("Password"));
+        txtComment.setText(roRec.getString("Comment"));
+
+        cmdAddUpdate.setText("Update");
     }
 
     protected boolean initDB() {
@@ -193,7 +197,6 @@ public class YAPMView extends FrameView {
         txtName = new javax.swing.JTextField();
         txtWebsite = new javax.swing.JTextField();
         txtUsername = new javax.swing.JTextField();
-        txtPassword = new javax.swing.JTextField();
         chkShowPassword = new javax.swing.JCheckBox();
         cmdBrowser = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
@@ -202,6 +205,7 @@ public class YAPMView extends FrameView {
         txtComment = new javax.swing.JTextArea();
         cmdAddUpdate = new javax.swing.JButton();
         cmdClear = new javax.swing.JButton();
+        txtPassword = new javax.swing.JPasswordField();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
@@ -311,8 +315,6 @@ public class YAPMView extends FrameView {
 
         txtUsername.setName("txtUsername"); // NOI18N
 
-        txtPassword.setName("txtPassword"); // NOI18N
-
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(yapm.YAPMApp.class).getContext().getActionMap(YAPMView.class, this);
         chkShowPassword.setAction(actionMap.get("ShowHidePassword")); // NOI18N
         chkShowPassword.setText(resourceMap.getString("chkShowPassword.text")); // NOI18N
@@ -343,6 +345,10 @@ public class YAPMView extends FrameView {
         cmdClear.setText(resourceMap.getString("cmdClear.text")); // NOI18N
         cmdClear.setName("cmdClear"); // NOI18N
 
+        txtPassword.setText(resourceMap.getString("txtPassword.text")); // NOI18N
+        txtPassword.setToolTipText(resourceMap.getString("txtPassword.toolTipText")); // NOI18N
+        txtPassword.setName("txtPassword"); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -363,12 +369,12 @@ public class YAPMView extends FrameView {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txtName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
                                     .addComponent(txtWebsite, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                                    .addComponent(txtUsername, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(chkShowPassword)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 135, Short.MAX_VALUE)
                                         .addComponent(jButton1))
-                                    .addComponent(txtPassword, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
-                                    .addComponent(txtUsername, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)))
+                                    .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(5, 5, 5)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -534,6 +540,10 @@ public class YAPMView extends FrameView {
     @Action
     public void ShowHidePassword() {
         if (chkShowPassword.isSelected()) {
+            char c = 0;
+            txtPassword.setEchoChar(c);
+        } else {
+            txtPassword.setEchoChar('*');
         }
     }
 
@@ -541,7 +551,13 @@ public class YAPMView extends FrameView {
     public void AddUpdate() {
         if (cmdAddUpdate.getText().equalsIgnoreCase("Add")) {
             Add();
+        } else {
+            Update();
         }
+    }
+
+    private void Update() {
+        
     }
 
     private void Add() {
@@ -576,10 +592,13 @@ public class YAPMView extends FrameView {
     @Action
     public void ClearFields() {
         txtName.setText("");
+        txtName.setBackground(Color.WHITE);
         txtWebsite.setText("");
         txtUsername.setText("");
         txtPassword.setText("");
         txtComment.setText("");
+
+        cmdAddUpdate.setText("Add");
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox chkShowPassword;
@@ -608,7 +627,7 @@ public class YAPMView extends FrameView {
     private javax.swing.JTable tblEntries;
     private javax.swing.JTextArea txtComment;
     private javax.swing.JTextField txtName;
-    private javax.swing.JTextField txtPassword;
+    private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtSearch;
     private javax.swing.JTextField txtUsername;
     private javax.swing.JTextField txtWebsite;

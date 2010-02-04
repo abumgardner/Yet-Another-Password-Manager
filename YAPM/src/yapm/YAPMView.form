@@ -179,13 +179,13 @@
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Component id="txtName" alignment="1" pref="355" max="32767" attributes="0"/>
                                                   <Component id="txtWebsite" alignment="1" pref="355" max="32767" attributes="0"/>
+                                                  <Component id="txtUsername" alignment="1" pref="355" max="32767" attributes="0"/>
                                                   <Group type="102" alignment="0" attributes="0">
                                                       <Component id="chkShowPassword" min="-2" max="-2" attributes="0"/>
                                                       <EmptySpace pref="135" max="32767" attributes="0"/>
                                                       <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                                                   </Group>
-                                                  <Component id="txtPassword" alignment="1" pref="355" max="32767" attributes="0"/>
-                                                  <Component id="txtUsername" alignment="1" pref="355" max="32767" attributes="0"/>
+                                                  <Component id="txtPassword" alignment="0" pref="355" max="32767" attributes="0"/>
                                               </Group>
                                           </Group>
                                           <Group type="102" alignment="0" attributes="0">
@@ -234,7 +234,7 @@
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="chkShowPassword" min="-2" max="-2" attributes="0"/>
+                                  <Component id="chkShowPassword" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
@@ -291,11 +291,6 @@
                     <Component class="javax.swing.JTextField" name="txtUsername">
                       <Properties>
                         <Property name="name" type="java.lang.String" value="txtUsername" noResource="true"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JTextField" name="txtPassword">
-                      <Properties>
-                        <Property name="name" type="java.lang.String" value="txtPassword" noResource="true"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="chkShowPassword">
@@ -360,6 +355,13 @@
                         </Property>
                         <Property name="text" type="java.lang.String" resourceKey="cmdClear.text"/>
                         <Property name="name" type="java.lang.String" value="cmdClear" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JPasswordField" name="txtPassword">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" resourceKey="txtPassword.text"/>
+                        <Property name="toolTipText" type="java.lang.String" resourceKey="txtPassword.toolTipText"/>
+                        <Property name="name" type="java.lang.String" value="txtPassword" noResource="true"/>
                       </Properties>
                     </Component>
                   </SubComponents>
