@@ -205,9 +205,9 @@ public class dao {
             return true;
     }
     
-   public boolean UpdateAddressBookEntry(String sKey, String sName, String sWebsite, String sUsername, String sPassword, String sComment, String sAddress) {
+   public boolean UpdateAddressBookEntry(String sName, String sWebsite, String sUsername, String sPassword, String sComment, String sAddress) {
         String sSql  = "UPDATE AddressBook set Website='" + sWebsite + "', ";
-        sSql += "Username='" + sUsername + "', Password='" + sPassword + "', Comment='" + sComment + "', Address='" + sAddress + "', Name='" + sName + "' WHERE ident=" + sKey;
+        sSql += "Username='" + sUsername + "', Password='" + sPassword + "', Comment='" + sComment + "', Address='" + sAddress + "' WHERE name='" + sName + "'";
         return executeNonQuery(sSql) == 1;
    }
 

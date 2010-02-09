@@ -100,11 +100,15 @@ public class YAPMView extends FrameView {
         }
 
         LoadEmUp();
+        jTabbedPane1.setSelectedIndex(0);
     }
 
     private void LoadEmUp() {
-        ArrayList<RecordObject> alRet = AppDao.GetAddressBookEntries();
-
+        LoadEmUp("");
+    }
+    
+    private void LoadEmUp(String sSearch) {
+        ArrayList<RecordObject> alRet = AppDao.GetAddressBookEntries(sSearch);
 
         DefaultTableModel model = new DefaultTableModel() {
 
@@ -145,6 +149,7 @@ public class YAPMView extends FrameView {
     private void ViewRecord(String sName) {
         RecordObject roRec = AppDao.GetAddressBookEntry(sName);
         txtName.setText(roRec.getString("Name"));
+        txtName.setEditable(false);
         txtWebsite.setText(roRec.getString("Website"));
         txtUsername.setText(roRec.getString("Username"));
         txtPassword.setText(roRec.getString("Password"));
@@ -257,6 +262,11 @@ public class YAPMView extends FrameView {
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(yapm.YAPMApp.class).getContext().getResourceMap(YAPMView.class);
         txtSearch.setText(resourceMap.getString("txtSearch.text")); // NOI18N
         txtSearch.setName("txtSearch"); // NOI18N
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchKeyReleased(evt);
+            }
+        });
 
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
@@ -517,6 +527,16 @@ public class YAPMView extends FrameView {
         setStatusBar(statusPanel);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
+        //Do the search
+        Search();
+    }//GEN-LAST:event_txtSearchKeyReleased
+
+    @Action
+    public void Search() {
+        LoadEmUp(txtSearch.getText());
+    }
+
     @Action
     public void LaunchBrowser() {
         if (txtWebsite.getText() == null || txtWebsite.getText().equals("")) {
@@ -557,7 +577,13 @@ public class YAPMView extends FrameView {
     }
 
     private void Update() {
-        
+        //String sName, String sWebsite, String sUsername, String sPassword, String sComment, String sAddress) {
+        if(AppDao.UpdateAddressBookEntry(txtName.getText(), txtWebsite.getText(), txtUsername.getText(), txtPassword.getText(), txtComment.getText(), "")) {
+            JOptionPane.showMessageDialog(null, "Entry Updated", "Success", JOptionPane.INFORMATION_MESSAGE);
+            //ClearFields();
+        } else {
+            JOptionPane.showMessageDialog(null, "Unable to update entry", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void Add() {
@@ -567,7 +593,8 @@ public class YAPMView extends FrameView {
         //String sName, String sWebsite, String sUsername, String sPassword, String sComment, String sAddress
         if (AppDao.InsertAddressBookEntry(txtName.getText(), txtWebsite.getText(), txtUsername.getText(), txtPassword.getText(), txtComment.getText(), "")) {
             JOptionPane.showMessageDialog(null, "Entry Created", "Success", JOptionPane.INFORMATION_MESSAGE);
-            ClearFields();
+            txtName.setEditable(false);
+            cmdAddUpdate.setText("Update");
         } else {
             JOptionPane.showMessageDialog(null, "Unable to create entry", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -593,6 +620,7 @@ public class YAPMView extends FrameView {
     public void ClearFields() {
         txtName.setText("");
         txtName.setBackground(Color.WHITE);
+        txtName.setEditable(true);
         txtWebsite.setText("");
         txtUsername.setText("");
         txtPassword.setText("");
