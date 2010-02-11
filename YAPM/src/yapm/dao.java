@@ -27,15 +27,23 @@ public class dao {
     private String m_sLastError = "";
     private boolean m_bHasError = false;
 
-    private static String m_sAddressBookCreate = "create table AddressBook (" +
-        "Website varchar(250), " +
-        "Username varchar(100), " +
-        "Password varchar(100), " +
-        "Comment varchar(250), " +
-        "Address varchar(400), " +
-        "Name varchar(50) NOT NULL," +
-        "PRIMARY KEY (Name))";
+//    private static String m_sAddressBookCreate = "create table AddressBook (" +
+//        "Website varchar(250), " +
+//        "Username varchar(100), " +
+//        "Password varchar(100), " +
+//        "Comment varchar(250), " +
+//        "Address varchar(400), " +
+//        "Name varchar(50) NOT NULL," +
+//        "PRIMARY KEY (Name))";
 
+    private static String m_sAddressBookCreate = "create table AddressBook (" +
+        "Website nvarchar(250), " +
+        "Username nvarchar(100), " +
+        "Password nvarchar(100), " +
+        "Comment nvarchar(250), " +
+        "Address nvarchar(400), " +
+        "Name nvarchar(50) NOT NULL PRIMARY KEY)";
+    
     public boolean HasError() {
         return m_bHasError;
     }
@@ -45,7 +53,7 @@ public class dao {
     }
 
     public dao() {
-        con = getConnection("addr.yapm");
+        con = getConnection("addr2.yapm");
         if(!tableExists()) {
             System.out.println("Creating table for new database");
             executeNonQuery(m_sAddressBookCreate);
@@ -57,20 +65,29 @@ public class dao {
     }
 
     private int executeNonQuery(String sSql) {
+        Statement stmt = null;
         try {
-            Statement stmt = con.createStatement();
+            stmt = con.createStatement();
             return stmt.executeUpdate(sSql);
         } catch (Exception e) {
             System.out.println("Exception in executeNonQuery(): " + e);
             return -1;
+        } finally {
+            try {
+                if(stmt!=null)
+                    stmt.close();
+                if(con!=null)
+                    con.close();
+            } catch (Exception e1) {}
         }
     }
 
     private Connection getConnection(String sDatabase) {
         Connection connection = null;
         try {
-            Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
-            connection = DriverManager.getConnection("jdbc:derby:" + sDatabase + ";create=true");
+            Class.forName("org.sqlite.JDBC").newInstance();
+            connection = DriverManager.getConnection("jdbc:sqlite:" + sDatabase);
+            connection.setAutoCommit(true);
             return connection;
         } catch (java.lang.ClassNotFoundException ce) {
             System.out.println("Class not found!");
