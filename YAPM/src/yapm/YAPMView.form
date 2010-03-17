@@ -12,7 +12,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="jTabbedPane1" pref="460" max="32767" attributes="0"/>
+                  <Component id="jTabbedPane1" pref="456" max="32767" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -54,13 +54,13 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jScrollPane1" pref="435" max="32767" attributes="1"/>
+                                  <Component id="jScrollPane1" pref="428" max="32767" attributes="1"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                  <Component id="txtSearch" pref="392" max="32767" attributes="1"/>
+                                  <Component id="txtSearch" pref="373" max="32767" attributes="1"/>
                                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -76,7 +76,7 @@
                               <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane1" pref="296" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" pref="284" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -180,31 +180,31 @@
                                           <Group type="102" attributes="0">
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="txtName" alignment="1" pref="355" max="32767" attributes="0"/>
-                                                  <Component id="txtWebsite" alignment="1" pref="355" max="32767" attributes="0"/>
-                                                  <Component id="txtUsername" alignment="1" pref="355" max="32767" attributes="0"/>
+                                                  <Component id="txtName" alignment="1" pref="317" max="32767" attributes="0"/>
+                                                  <Component id="txtWebsite" alignment="1" pref="317" max="32767" attributes="0"/>
+                                                  <Component id="txtUsername" alignment="1" pref="317" max="32767" attributes="0"/>
                                                   <Group type="102" alignment="0" attributes="0">
                                                       <Component id="chkShowPassword" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace pref="135" max="32767" attributes="0"/>
-                                                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                                                      <EmptySpace pref="49" max="32767" attributes="0"/>
+                                                      <Component id="jButton1" min="-2" pref="146" max="-2" attributes="0"/>
                                                   </Group>
-                                                  <Component id="txtPassword" alignment="0" pref="355" max="32767" attributes="0"/>
+                                                  <Component id="txtPassword" alignment="0" pref="317" max="32767" attributes="0"/>
                                               </Group>
                                           </Group>
                                           <Group type="102" alignment="0" attributes="0">
                                               <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Component id="cmdClear" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                  <Component id="jScrollPane2" alignment="0" pref="354" max="32767" attributes="0"/>
+                                                  <Component id="jScrollPane2" alignment="0" pref="324" max="32767" attributes="0"/>
                                               </Group>
                                           </Group>
                                       </Group>
                                   </Group>
-                                  <Component id="cmdBrowser" alignment="1" min="-2" pref="119" max="-2" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace pref="362" max="32767" attributes="0"/>
+                                      <EmptySpace pref="367" max="32767" attributes="0"/>
                                       <Component id="cmdAddUpdate" min="-2" max="-2" attributes="0"/>
                                   </Group>
+                                  <Component id="cmdBrowser" alignment="1" min="-2" pref="145" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -237,13 +237,13 @@
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="chkShowPassword" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="chkShowPassword" min="-2" max="-2" attributes="0"/>
                                   <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jScrollPane2" pref="72" max="32767" attributes="0"/>
+                                  <Component id="jScrollPane2" pref="27" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -446,7 +446,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="statusMessageLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="310" max="32767" attributes="0"/>
+                  <EmptySpace pref="298" max="32767" attributes="0"/>
                   <Component id="progressBar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="statusAnimationLabel" min="-2" max="-2" attributes="0"/>

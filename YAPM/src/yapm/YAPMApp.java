@@ -4,21 +4,26 @@
 
 package yapm;
 
+import java.awt.Component;
+import java.util.EventObject;
+import javax.swing.JOptionPane;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 
 /**
  * The main class of the application.
  */
-public class YAPMApp extends SingleFrameApplication { 
+public class YAPMApp extends SingleFrameApplication implements Application.ExitListener  {
 
-    
+    YAPMView tView;
 
     /**
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
-        show(new YAPMView(this));
+        addExitListener(this);
+        tView = new YAPMView(this);
+        show(tView);
     }
 
     /**
@@ -43,6 +48,19 @@ public class YAPMApp extends SingleFrameApplication {
     public static void main(String[] args) {
         launch(YAPMApp.class, args);
     }
+
+    public boolean canExit(EventObject e) {
+         Object source = (e != null) ? e.getSource() : null;
+         Component owner = (source instanceof Component) ? (Component)source : null;
+         int option = JOptionPane.showConfirmDialog(owner, "Really Exit?");
+         return option == JOptionPane.YES_OPTION;
+    }
+
+    public void willExit(EventObject e) {
+        tView.getDAO().destroy();
+        System.out.println("DAO Destroyed");
+    }
+
 
     
 

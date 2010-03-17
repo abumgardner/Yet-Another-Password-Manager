@@ -5,7 +5,7 @@
 
 package yapm;
 
-import com.bumgardner.utils.RecordObject;
+import com.bumgardner.utils.AddressRec;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -64,7 +64,15 @@ public class dao {
         }
     }
 
+    public void destroy() {
+        try {
+            if(con!=null)
+                con.close();
+        } catch (Exception e) {}
+    }
+
     private int executeNonQuery(String sSql) {
+        //con = getConnection("addr2.yapm");
         Statement stmt = null;
         try {
             stmt = con.createStatement();
@@ -72,13 +80,6 @@ public class dao {
         } catch (Exception e) {
             System.out.println("Exception in executeNonQuery(): " + e);
             return -1;
-        } finally {
-            try {
-                if(stmt!=null)
-                    stmt.close();
-                if(con!=null)
-                    con.close();
-            } catch (Exception e1) {}
         }
     }
 
@@ -99,10 +100,11 @@ public class dao {
         }
     }
 
-    private RecordObject getSingleRecord(String sSql) {
+    private AddressRec getSingleRecord(String sSql) {
         Statement stmt = null;
         ResultSet rs = null;
         try {
+            //con = getConnection("addr2.yapm");
             stmt = con.createStatement();
             return ResultSetToRecordObj(stmt.executeQuery(sSql));
         } catch (Exception e) {
@@ -115,6 +117,7 @@ public class dao {
         Statement stmt = null;
         ResultSet rs = null;
         try {
+            //con = getConnection("addr2.yapm");
             stmt = con.createStatement();
             rs = stmt.executeQuery(sSql);
             return rs;
@@ -122,45 +125,58 @@ public class dao {
             System.out.println("Exception in getManyRecords(): " + e);
             return null;
         }
+//        finally {
+//            try {
+//                if(rs!=null)
+//                    rs.close();
+//                if(stmt!=null)
+//                    stmt.close();
+//                if(con!=null)
+//                    con.close();
+//            } catch (Exception e2) {}
+//        }
     }
 
-    private RecordObject ResultSetToRecordObj(ResultSet oResultSet)
+    private AddressRec ResultSetToRecordObj(ResultSet oResultSet)
     {
-        RecordObject Rec = new RecordObject();
+        AddressRec Rec = new AddressRec();
 
         try {
             if (oResultSet.next()) {
-                ResultSetMetaData rsmd = oResultSet.getMetaData();
-                int iNumColumns = rsmd.getColumnCount();
-
-                for (int i = 0; i < iNumColumns; i++)
-                    Rec.setFieldValue(rsmd.getColumnName(i + 1), oResultSet.getObject(i + 1));
+                Rec.setAddress(oResultSet.getString("Address"));
+                Rec.setComment(oResultSet.getString("Comment"));
+                Rec.setName(oResultSet.getString("Name"));
+                Rec.setPassword(oResultSet.getString("Password"));
+                Rec.setUsername(oResultSet.getString("Username"));
+                Rec.setWebsite(oResultSet.getString("Username"));
             }
             else
                 Rec = null;
         }
         catch (Exception e) {
-            System.out.println("An exception ocurred during result set conversion to a RecordObject. Exception: " + e);
+            System.out.println("An exception ocurred during result set conversion to a AddressRec. Exception: " + e);
             Rec = null;
         }
 
         return Rec;
     }
 
-    private ArrayList<RecordObject> ResultSetToArrayList(ResultSet oResultSet)
+    private ArrayList<AddressRec> ResultSetToArrayList(ResultSet oResultSet)
     {
         ArrayList alRet = new ArrayList();
 
         try {
-            RecordObject oRec = null;
-            ResultSetMetaData rsmd = oResultSet.getMetaData();
-            int iIdx = 0, iNumColumns = rsmd.getColumnCount();
+            AddressRec oRec = null;
 
             while (oResultSet.next()) {
-                oRec = new RecordObject();
+                oRec = new AddressRec();
 
-                for (iIdx = 0; iIdx < iNumColumns; iIdx++)
-                    oRec.setFieldValue(rsmd.getColumnName(iIdx + 1), oResultSet.getObject(iIdx + 1));
+                oRec.setAddress(oResultSet.getString("Address"));
+                oRec.setComment(oResultSet.getString("Comment"));
+                oRec.setName(oResultSet.getString("Name"));
+                oRec.setPassword(oResultSet.getString("Password"));
+                oRec.setUsername(oResultSet.getString("Username"));
+                oRec.setWebsite(oResultSet.getString("Username"));
 
                 alRet.add(oRec);
             }
@@ -175,6 +191,7 @@ public class dao {
 
     private boolean tableExists() {
         try {
+            //con = getConnection("addr2.yapm");
             DatabaseMetaData md = con.getMetaData();
             ResultSet rs = md.getTables(null, null, null, new String[] { "TABLE" });
             if(rs.next())
@@ -184,14 +201,9 @@ public class dao {
         } catch (SQLException ex) {
             Logger.getLogger(dao.class.getName()).log(Level.SEVERE, null, ex);
         }
+       
 
         return false;
-//        String sSql = "Select TBL_NAME FROM sqlite_master WHERE (TBL_NAME = 'AddressBook')";
-//        RecordObject roRec = getSingleRecord(sSql);
-//        if(roRec==null || (roRec.getString("TBL_NAME")==null || roRec.getString("TBL_NAME").equals("")))
-//            return false;
-//        else
-//            return true;
     }
 
     public boolean DeleteAddressBookEntry(String sKey) {
@@ -199,23 +211,23 @@ public class dao {
         return executeNonQuery(sSql) == 1;
     }
 
-    public ArrayList<RecordObject> GetAddressBookEntries() {
+    public ArrayList<AddressRec> GetAddressBookEntries() {
         String sSql  = "SELECT * FROM ADDRESSBOOK";
         return ResultSetToArrayList(getManyRecords(sSql));
     }
 
-    public ArrayList<RecordObject> GetAddressBookEntries(String sName) {
+    public ArrayList<AddressRec> GetAddressBookEntries(String sName) {
         String sSql = "SELECT * FROM ADDRESSBOOK WHERE Name like '%" + sName + "%'";
         return ResultSetToArrayList(getManyRecords(sSql));
     }
 
-    public RecordObject GetAddressBookEntry(String sName) {
+    public AddressRec GetAddressBookEntry(String sName) {
         return getSingleRecord("SELECT * FROM ADDRESSBOOK WHERE Name='" + sName + "'");
     }
 
     public boolean DoesAddressBookNameExist(String sName) {
         String sSql = "SELECT Name FROM AddressBook WHERE Name='" + sName + "'";
-        RecordObject roRec = getSingleRecord(sSql);
+        AddressRec roRec = getSingleRecord(sSql);
         if(roRec==null) 
             return false;
         else

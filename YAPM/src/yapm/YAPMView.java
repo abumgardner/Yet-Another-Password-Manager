@@ -3,7 +3,7 @@
  */
 package yapm;
 
-import com.bumgardner.utils.RecordObject;
+import com.bumgardner.utils.AddressRec;
 import java.awt.Color;
 import java.awt.Point;
 import org.jdesktop.application.Action;
@@ -31,6 +31,10 @@ import javax.swing.table.DefaultTableModel;
 public class YAPMView extends FrameView {
 
     private dao AppDao;
+
+    public dao getDAO() {
+        return AppDao;
+    }
 
     public YAPMView(SingleFrameApplication app) {
         super(app);
@@ -108,7 +112,7 @@ public class YAPMView extends FrameView {
     }
     
     private void LoadEmUp(String sSearch) {
-        ArrayList<RecordObject> alRet = AppDao.GetAddressBookEntries(sSearch);
+        ArrayList<AddressRec> alRet = AppDao.GetAddressBookEntries(sSearch);
 
         DefaultTableModel model = new DefaultTableModel() {
 
@@ -124,8 +128,8 @@ public class YAPMView extends FrameView {
 
         tblEntries.setModel(model);
 
-        for (RecordObject roRec : alRet) {
-            model.addRow(new String[]{roRec.getString("Name"), roRec.getString("Website"), roRec.getString("Comment")});
+        for (AddressRec roRec : alRet) {
+            model.addRow(new String[]{roRec.getName(), roRec.getWebsite(), roRec.getComment()});
         }
 
         tblEntries.addMouseListener(new MouseAdapter() {
@@ -147,13 +151,13 @@ public class YAPMView extends FrameView {
     }
 
     private void ViewRecord(String sName) {
-        RecordObject roRec = AppDao.GetAddressBookEntry(sName);
-        txtName.setText(roRec.getString("Name"));
+        AddressRec roRec = AppDao.GetAddressBookEntry(sName);
+        txtName.setText(roRec.getName());
         txtName.setEditable(false);
-        txtWebsite.setText(roRec.getString("Website"));
-        txtUsername.setText(roRec.getString("Username"));
-        txtPassword.setText(roRec.getString("Password"));
-        txtComment.setText(roRec.getString("Comment"));
+        txtWebsite.setText(roRec.getWebsite());
+        txtUsername.setText(roRec.getUsername());
+        txtPassword.setText(roRec.getPassword());
+        txtComment.setText(roRec.getComment());
 
         cmdAddUpdate.setText("Update");
     }
@@ -279,12 +283,12 @@ public class YAPMView extends FrameView {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
                         .addGap(10, 10, 10))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -295,7 +299,7 @@ public class YAPMView extends FrameView {
                     .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -377,23 +381,23 @@ public class YAPMView extends FrameView {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
-                                    .addComponent(txtWebsite, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
-                                    .addComponent(txtUsername, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                                    .addComponent(txtName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
+                                    .addComponent(txtWebsite, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
+                                    .addComponent(txtUsername, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(chkShowPassword)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 135, Short.MAX_VALUE)
-                                        .addComponent(jButton1))
-                                    .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(5, 5, 5)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(cmdClear)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)))))
-                    .addComponent(cmdBrowser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 362, Short.MAX_VALUE)
-                        .addComponent(cmdAddUpdate)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 367, Short.MAX_VALUE)
+                        .addComponent(cmdAddUpdate))
+                    .addComponent(cmdBrowser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -424,7 +428,7 @@ public class YAPMView extends FrameView {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 27, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cmdAddUpdate)
@@ -455,7 +459,7 @@ public class YAPMView extends FrameView {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
                 .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
@@ -504,7 +508,7 @@ public class YAPMView extends FrameView {
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 310, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 298, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -536,6 +540,12 @@ public class YAPMView extends FrameView {
     public void Search() {
         LoadEmUp(txtSearch.getText());
     }
+
+//    @Action
+//    public void quit(java.awt.event.ActionEvent e) {
+//        System.out.println("AHHHHHHHHH");
+//        System.exit(0);
+//    }
 
     @Action
     public void LaunchBrowser() {
@@ -574,6 +584,8 @@ public class YAPMView extends FrameView {
         } else {
             Update();
         }
+        //Whatever we did we need to refresh everything
+        LoadEmUp();
     }
 
     private void Update() {
