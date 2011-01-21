@@ -6,6 +6,11 @@ package yapm;
 import com.bumgardner.utils.RecordObject;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
@@ -28,9 +33,11 @@ import javax.swing.table.DefaultTableModel;
 /**
  * The application's main frame.
  */
-public class YAPMView extends FrameView {
+public class YAPMView extends FrameView implements ClipboardOwner {
 
     private dao AppDao;
+    private String sPassPhrase;
+    private EncryptDecrypt ed;
 
     public YAPMView(SingleFrameApplication app) {
         super(app);
@@ -99,6 +106,12 @@ public class YAPMView extends FrameView {
             System.exit(-1);
         }
 
+        //Get the Passphrase
+        dlgPassword dlg = new dlgPassword(app.getMainFrame(), true);
+        dlg.setVisible(true);
+        sPassPhrase = dlg.getPassphrase();
+        ed = new EncryptDecrypt(sPassPhrase);
+        
         LoadEmUp();
         jTabbedPane1.setSelectedIndex(0);
     }
@@ -152,7 +165,7 @@ public class YAPMView extends FrameView {
         txtName.setEditable(false);
         txtWebsite.setText(roRec.getString("Website"));
         txtUsername.setText(roRec.getString("Username"));
-        txtPassword.setText(roRec.getString("Password"));
+        txtPassword.setText(ed.decrypt(roRec.getString("Password")));
         txtComment.setText(roRec.getString("Comment"));
 
         cmdAddUpdate.setText("Update");
@@ -295,7 +308,7 @@ public class YAPMView extends FrameView {
                     .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -334,6 +347,7 @@ public class YAPMView extends FrameView {
         cmdBrowser.setText(resourceMap.getString("cmdBrowser.text")); // NOI18N
         cmdBrowser.setName("cmdBrowser"); // NOI18N
 
+        jButton1.setAction(actionMap.get("CopyToClipboard")); // NOI18N
         jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
         jButton1.setName("jButton1"); // NOI18N
 
@@ -350,6 +364,11 @@ public class YAPMView extends FrameView {
         cmdAddUpdate.setAction(actionMap.get("AddUpdate")); // NOI18N
         cmdAddUpdate.setText(resourceMap.getString("cmdAddUpdate.text")); // NOI18N
         cmdAddUpdate.setName("cmdAddUpdate"); // NOI18N
+        cmdAddUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdAddUpdateActionPerformed(evt);
+            }
+        });
 
         cmdClear.setAction(actionMap.get("ClearFields")); // NOI18N
         cmdClear.setText(resourceMap.getString("cmdClear.text")); // NOI18N
@@ -382,7 +401,7 @@ public class YAPMView extends FrameView {
                                     .addComponent(txtUsername, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(chkShowPassword)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 135, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 133, Short.MAX_VALUE)
                                         .addComponent(jButton1))
                                     .addComponent(txtPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -392,7 +411,7 @@ public class YAPMView extends FrameView {
                                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)))))
                     .addComponent(cmdBrowser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 362, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 360, Short.MAX_VALUE)
                         .addComponent(cmdAddUpdate)))
                 .addContainerGap())
         );
@@ -424,7 +443,7 @@ public class YAPMView extends FrameView {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cmdAddUpdate)
@@ -461,7 +480,7 @@ public class YAPMView extends FrameView {
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -504,7 +523,7 @@ public class YAPMView extends FrameView {
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 310, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 306, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -532,6 +551,10 @@ public class YAPMView extends FrameView {
         Search();
     }//GEN-LAST:event_txtSearchKeyReleased
 
+    private void cmdAddUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdAddUpdateActionPerformed
+        
+    }//GEN-LAST:event_cmdAddUpdateActionPerformed
+
     @Action
     public void Search() {
         LoadEmUp(txtSearch.getText());
@@ -558,6 +581,16 @@ public class YAPMView extends FrameView {
     }
 
     @Action
+    public void CopyToClipboard() {
+        //String sPassword = new String(txtPassword.getPassword());
+        StringSelection stringSelection = new StringSelection( new String(txtPassword.getPassword()) );
+        //this.getApplication().getInstance().getContext().getClipboard().setContents(sPassword, this);
+        //final Clipboard clipboard = frame.getToolkit().getSystemClipboard();
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, this);
+    }
+
+    @Action
     public void ShowHidePassword() {
         if (chkShowPassword.isSelected()) {
             char c = 0;
@@ -578,7 +611,7 @@ public class YAPMView extends FrameView {
 
     private void Update() {
         //String sName, String sWebsite, String sUsername, String sPassword, String sComment, String sAddress) {
-        if(AppDao.UpdateAddressBookEntry(txtName.getText(), txtWebsite.getText(), txtUsername.getText(), txtPassword.getText(), txtComment.getText(), "")) {
+        if(AppDao.UpdateAddressBookEntry(txtName.getText(), txtWebsite.getText(), txtUsername.getText(), ed.encrypt(txtPassword.getText()), txtComment.getText(), "")) {
             JOptionPane.showMessageDialog(null, "Entry Updated", "Success", JOptionPane.INFORMATION_MESSAGE);
             //ClearFields();
         } else {
@@ -591,7 +624,7 @@ public class YAPMView extends FrameView {
             return;
         }
         //String sName, String sWebsite, String sUsername, String sPassword, String sComment, String sAddress
-        if (AppDao.InsertAddressBookEntry(txtName.getText(), txtWebsite.getText(), txtUsername.getText(), txtPassword.getText(), txtComment.getText(), "")) {
+        if (AppDao.InsertAddressBookEntry(txtName.getText(), txtWebsite.getText(), txtUsername.getText(), ed.encrypt(txtPassword.getText()), txtComment.getText(), "")) {
             JOptionPane.showMessageDialog(null, "Entry Created", "Success", JOptionPane.INFORMATION_MESSAGE);
             txtName.setEditable(false);
             cmdAddUpdate.setText("Update");
@@ -666,4 +699,8 @@ public class YAPMView extends FrameView {
     private final Icon[] busyIcons = new Icon[15];
     private int busyIconIndex = 0;
     private JDialog aboutBox;
+
+    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+        //throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

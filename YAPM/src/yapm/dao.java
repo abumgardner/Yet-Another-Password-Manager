@@ -76,8 +76,6 @@ public class dao {
             try {
                 if(stmt!=null)
                     stmt.close();
-                if(con!=null)
-                    con.close();
             } catch (Exception e1) {}
         }
     }
