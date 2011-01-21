@@ -64,6 +64,14 @@ public class dao {
         }
     }
 
+    public void destroy() {
+        try {
+            con.close();
+        } catch (Exception e) {
+            //don't care
+        }
+    }
+
     private int executeNonQuery(String sSql) {
         Statement stmt = null;
         try {

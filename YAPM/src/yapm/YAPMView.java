@@ -39,6 +39,10 @@ public class YAPMView extends FrameView implements ClipboardOwner {
     private String sPassPhrase;
     private EncryptDecrypt ed;
 
+    public dao getDAO() {
+        return AppDao;
+    }
+
     public YAPMView(SingleFrameApplication app) {
         super(app);
 
@@ -703,4 +707,6 @@ public class YAPMView extends FrameView implements ClipboardOwner {
     public void lostOwnership(Clipboard clipboard, Transferable contents) {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
+
+
 }
